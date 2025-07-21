@@ -173,33 +173,35 @@ def test_group_normality(data, metric, bins):
 
 if __name__ == "__main__":
     student_metrics = pd.read_csv(f"student_metrics.csv")
-    # student_scores = pd.read_csv("fourth_test_metrics.csv")
+    student_scores = pd.read_csv("fourth_test_metrics.csv")
+    # student_scores = pd.read_csv("test_metrics.csv")
+    all_metrics = student_metrics.merge(student_scores, left_on="service_id", right_on="id", how="inner")
+    print(f"Size of student metrics: {len(student_metrics)}; Size of Student Scores: {len(student_scores)}; Size of combined: {len(all_metrics)}")
+    
     # student_metrics = student_metrics.merge(student_scores, left_on="service_id", right_on="id", how="inner")
     metric = "words_with_4plus_exposures"
     print("RESULTS FOR METRIC: ", metric)
     # Look for visual separations
-    bin_edges = explore_binning(student_metrics, metric)
+    bin_edges = explore_binning(all_metrics, metric)
     print("Bin edges: ", [float(i) for i in bin_edges])
-    # bin_edges = [4.49, 56.11894737, 107.74789474, 159.37684211, 211.00578947, 985.44] # total playtime
-    # bin_edges = [2.0, 34.166, 66.333, 98.5, 130.666, 388.0] # total_pns
-    # bin_edges = [1.0, 3.623333333333333, 4.27917, 4.935, 5.590833333333332, 6.246666666666666, 8.87] # average interactions
-    # bin_edges = [1.0,4.577272727272726, 5.292727272727272, 6.008181818181818, 8.87] # average interactions fourth only
-    bin_edges = [0.0, 5.666666666666667, 11.333333333333334, 17.0, 22.666666666666668, 28.333333333333336, 68.0] # learned words
+    # bin_edges = [10.84, 62.82181818181817, 114.80363636363636, 166.78545454545454, 218.7672727272727, 582.64] # total playtime
+    # bin_edges = [2.0, 34.166, 66.333, 98.5, 130, 388.0] # total_pns
+    # bin_edges = [1.0,4.577272727272726, 6.008181818181818, 8.87] # avg_interactions_per_word
+    bin_edges = [0.0, 5.6, 11.2, 16.8, 22.4, 68.0] # words_with_4plus_exposures
+    # bin_edges = [0.0, 3.75, 7.5, 11.25, 15.0, 30.0] # trained_with_4plus_exposures
     print("Checking whether each of our groups are ok to use with ANOVA")
-    test_group_normality(student_metrics, metric, bin_edges)
+    test_group_normality(all_metrics, metric, bin_edges)
     # Use kmeans
-    sil_scores, inertias, k = find_optimal_clusters(student_metrics, metric)
+    sil_scores, inertias, k = find_optimal_clusters(all_metrics, metric)
     print("k is ", k)
     if k <= 0:
         print("No ideal clustering for this metric")
     else:
-        fit_kmeans(student_metrics, metric, k)
+        fit_kmeans(all_metrics, metric, k)
 
     # ANOVA analyses
-    student_scores = pd.read_csv("test_metrics.csv")
-    all_metrics = student_metrics.merge(student_scores, left_on="service_id", right_on="id", how="inner")
+    
     # all_metrics = student_metrics
-    print(f"Size of student metrics: {len(student_metrics)}; Size of Student Scores: {len(student_scores)}; Size of combined: {len(all_metrics)}")
 
     all_metrics['bin_group'] = pd.cut(all_metrics[metric], bins=bin_edges, include_lowest=True)
     # ANOVA based on binning

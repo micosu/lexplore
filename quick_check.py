@@ -1,8 +1,8 @@
 import csv
 import pandas as pd
-
+# File checking how many students answered multi-select questions with only one answer
 if __name__ == "__main__":
-    original = 'mid_tests/Second_Renamed_Columns.csv'
+    original = 'pre_tests/Second_Renamed_Columns_v2.csv'
     df = pd.read_csv(original)
     all_count = 0
     

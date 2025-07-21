@@ -329,18 +329,18 @@ student_metrics = student_metrics.merge(student_word_metrics, on='service_id', h
 student_metrics.to_csv(f"results/{date_var}/student_metrics.csv", index=False)
 
 # Histogram for days_active
-sns.histplot(student_metrics['days_active'], bins=12, kde=False)
-plt.title('Distribution of Days Active')
-plt.xlabel('Days Active')
-plt.ylabel('Number of Students')
-plt.show()
+# sns.histplot(student_metrics['days_active'], bins=12, kde=False)
+# plt.title('Distribution of Days Active')
+# plt.xlabel('Days Active')
+# plt.ylabel('Number of Students')
+# plt.show()
 
-# Histogram for words_with_4plus_exposures
-sns.histplot(student_metrics['words_with_4plus_exposures'], bins=12, kde=False)
-plt.title('Distribution of Words with 4+ Exposures')
-plt.xlabel('Words with ≥4 Exposures')
-plt.ylabel('Number of Students')
-plt.show()
+# # Histogram for words_with_4plus_exposures
+# sns.histplot(student_metrics['words_with_4plus_exposures'], bins=12, kde=False)
+# plt.title('Distribution of Words with 4+ Exposures')
+# plt.xlabel('Words with ≥4 Exposures')
+# plt.ylabel('Number of Students')
+# plt.show()
 # Find top concerning students
 # top_concerning_students = student_metrics.sort_values(
 #     by=['flags_count', 'is_playing_less', 'is_pnsing_less', 'is_finishing_less', 'is_inactive'],

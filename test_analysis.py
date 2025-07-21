@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the files
-second_pretest = pd.read_csv("pre_tests/Second_Grading_Results.csv")
-second_midtest = pd.read_csv("mid_tests/Second_Grading_Results.csv")
+second_pretest = pd.read_csv("pre_tests/Second_Grading_Results_v2.csv")
+second_midtest = pd.read_csv("mid_tests/Second_Grading_Results_v2.csv")
 
 fourth_pretest = pd.read_csv("pre_tests/Fourth_Grading_Results.csv")
 fourth_midtest = pd.read_csv("mid_tests/Fourth_Grading_Results.csv")
@@ -59,8 +59,33 @@ pretest = pretest.drop(q, axis = 1)
 midtest = midtest.drop(q, axis = 1)
 
 all_tests = pd.merge(pretest, midtest, on="id", how="outer")
+
 tests = pd.merge(pretest, midtest, on="id", suffixes=("_pre", "_mid"))
 
+diff = all_tests.merge(tests, on='id', how='left', indicator=True)
+missing_rows = diff[diff['_merge'] == 'left_only'].drop('_merge', axis=1)
+# Count rows with grade_x = Second and have timestamp_x
+second_with_x = (((missing_rows['grade_x'] == 'Second') | (missing_rows['grade_y'] == 'Second')) & 
+                 (missing_rows['timestamp_x'].notna())).sum()
+
+# Count rows with grade_x = Second and have timestamp_y  
+second_with_y = (((missing_rows['grade_x'] == 'Second') | (missing_rows['grade_y'] == 'Second')) & 
+                 (missing_rows['timestamp_y'].notna())).sum()
+
+# Count rows with grade_x = Fourth and have timestamp_x
+fourth_with_x = (((missing_rows['grade_x'] == 'Fourth') | (missing_rows['grade_y'] == 'Fourth')) & 
+                 (missing_rows['timestamp_x'].notna())).sum()
+
+# Count rows with grade_x = Fourth and have timestamp_y
+fourth_with_y = (((missing_rows['grade_x'] == 'Fourth') | (missing_rows['grade_y'] == 'Fourth')) & 
+                 (missing_rows['timestamp_y'].notna())).sum()
+
+print(f"Second graders who only took pre-test: {second_with_x}")
+print(f"Second graders who only took post-test: {second_with_y}")
+print(f"Fourth graders who only took pre-test: {fourth_with_x}")
+print(f"Fourth graders who only took post-test: {fourth_with_y}")
+
+missing_rows.to_csv(f"missing_data.csv", index=False)
 print("\n=== FINAL RESULTS ===")
 print("Number of tests unable to be matched between pretest and posttest: ", len(all_tests) - len(tests))
 print("Number of tests to analyze: ", len(tests))

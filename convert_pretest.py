@@ -1,6 +1,8 @@
 import pandas as pd
 import csv
 
+# BEFORE PROCESSING, MAKE SURE YOU CHANGE ALL ",. " to ".| "
+# ALSO, SOME OF THE ' ARE WEIRD, MAKE SURE THEY ARE
 # Fourth Grade Pretest 1
 pre_key_fourth = {
     "1": "Sturdy",
@@ -571,8 +573,8 @@ def grade_student_csv(csv_file, answer_key, trained, untrained, output_file=None
             if column_name in df.columns:
                 student_answer = row.get(column_name, "")
                 # For second grade post test, skip question 24, since there is no correct answer
-                # if question_num == "24":
-                #     continue
+                if question_num == "24":
+                    continue
                 is_correct, is_trained = check_answer(student_answer, answer_key[question_num], question_num, trained, untrained)
                 student_results['questions'][question_num] = {
                     'student_answer': student_answer,
@@ -645,7 +647,10 @@ def save_grading_results(detailed_results, output_file, answer_key):
         if student['total_correct'] != int(student['original_score'].strip().split("/")[0]):
             print(student["id"], student['total_correct'], int(student['original_score'].split("/")[0].strip()))
             # assert(student['total_correct'] == int(student['original_score'].strip().split("/")[0]))
+        # second grade post-test
         assert(student['total_trained_questions'] + student['total_untrained_questions'] == 29)
+        # general test
+        # assert(student['total_trained_questions'] + student['total_untrained_questions'] == 30)
 
         row = {
             'id': student['id'],
@@ -724,13 +729,13 @@ def analyze_question_performance(results, answer_key):
 # Usage examples:
 if __name__ == "__main__":
     # Step 1: Create a new file with renamed columns
-    # original = 'pre_tests/ANON_SecondGrade_PreTest.csv'
-    # renamed = 'pre_tests/Second_Renamed_Columns.csv'
-    # results_name = 'pre_tests/Second_Grading_Results.csv'
+    # original = 'pre_tests/Second_Grade_Pretest_v2.csv'
+    # renamed = 'pre_tests/Second_Renamed_Columns_v2.csv'
+    # results_name = 'pre_tests/Second_Grading_Results_v2.csv'
 
-    original = 'mid_tests/ANON_Second_Grade_WT_Pretest_2.csv'
-    renamed = 'mid_tests/Second_Renamed_Columns.csv'
-    results_name = 'mid_tests/Second_Grading_Results.csv'
+    original = 'mid_tests/Second_Grade_Midtest_v2.csv'
+    renamed = 'mid_tests/Second_Renamed_Columns_v2.csv'
+    results_name = 'mid_tests/Second_Grading_Results_v2.csv'
 
     rename_csv_columns(original, renamed)
 
